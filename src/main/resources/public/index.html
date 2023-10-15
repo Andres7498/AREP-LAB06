@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Taller 6</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+<h1>Escribe algo</h1>
+<form action="/app">
+    <input type="text" id="string" name="string" value="Prueba" ><br><br>
+    <input type="button" value="Add" onclick="post()">
+</form>
+<br>
+<div id="getrespmsg" class="card">
+    <input type="button" value="Get" onclick="loadGetMsg()">
+</div>
+<table id="myTable" style="display: none" border="1">
+    <tr class="table-header">
+        <th>String</th>
+        <th>Date</th>
+    </tr>
+</table>
+
+<script>
+        function loadGetMsg() {
+                  fetch('/app')
+                  .then(response => response.json())
+                  .then((data) => {
+                    console.log(data);
+                    buildTable(data);
+                  });
+        }
+
+        function post() {
+                  let string = document.getElementById("string").value;
+                  doPost(string)
+                  .then((data) => {
+                      buildTable(data);
+                  })
+        }
+
+        function doPost(data) {
+                return new Promise((resolve, reject) => {
+                  fetch('/app', {
+                    method: 'POST',
+                    body: JSON.stringify(data),
+                    headers:{
+                      'Content-Type': 'application/json'
+                    }
+                  })
+                  .then((response) => {
+                      if (response.ok) {
+                        return response.json();
+                      }
+                      reject(
+                        "Erro de JSON tipo: " + response.status
+                      );
+                    })
+                  .then((json) => resolve(json))
+                  .catch((err) => reject(err));
+                });
+        }
+
+        function buildTable(json){
+                  cleanElements([...document.getElementsByClassName("row")]);
+                  let data = json;
+                  console.log(data);
+                  let table = document.getElementById("myTable");
+                  table.style.display = "";
+                  data.forEach(element => {
+                            let row = `<tr class="row">
+                                                <td>${element.text}</td>
+                                                <td>${element.date}</td>
+                                      </tr>`
+                           table.innerHTML += row;
+                  });
+        }
+
+        function cleanElements(elements) {
+                  if(elements.length > 0) {
+                            for(element of elements){
+                                      element.remove();
+                            };
+                  }
+        }
+</script>
+</body>
+</html>
