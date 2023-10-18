@@ -9,7 +9,7 @@
 
 ## Arquitectura
 
-![image]()
+![image](https://github.com/Andres7498/AREP-LAB06/blob/main/images/1.png)
 
 ## Solución
 
